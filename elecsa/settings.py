@@ -26,12 +26,14 @@ SECRET_KEY = 'django-insecure-s_fh63o8l%1h3dt3x3e4h4^!82s)v)c4fs9p_x1=q15m&s1gl+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+import django_heroku
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'authsystem',
     'participants',
     'posts',
@@ -46,7 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -86,6 +88,7 @@ DATABASES = {
     }
 }
 
+django_heroku.settings(locals())
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -134,5 +137,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #   os.path.join(BASE_DIR,"static"),
 #]
 STATIC_ROOT = os.path.join(BASE_DIR,"static")
-import django_heroku
-django_heroku.settings(locals())
