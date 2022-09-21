@@ -5,7 +5,7 @@ from django.contrib import messages
 from participants.models import participant
 from posts.models import elecsa_post
 from votes.models import vote
-
+from participants.forms import ParticipantForm
 def home(request):
     if request.user.is_authenticated:
         return redirect('/dashboard')
@@ -41,6 +41,8 @@ def voting(request,id=None):
             participants = participant.objects.filter(post=id)
             context['post']= post
             context['participants'] = participants
+            context['form'] = ParticipantForm()
+
             return render(request,'voting.html',context)
             
     else:
@@ -77,6 +79,51 @@ def results(request):
     else:
         return redirect('/')
 
+
+def removePost(request,id=None):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            post = elecsa_post.objects.get(id=id).delete()
+            return redirect('/dashboard')
+        else:
+            return HttpResponse("Only admins Action")       
+    else:
+        return redirect('/')
+def removeParticipant(request,po=None,id=None):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            post = participant.objects.get(id=id).delete()
+            return redirect('/voting/'+str(po))
+        else:
+            return HttpResponse("Only admins Action")       
+    else:
+        return redirect('/')
+def addPost(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            if request.method == 'POST':
+                postname = request.POST['postname']
+                postdes = request.POST['postdes']
+                adpo = elecsa_post(post_name=postname,post_description=postdes)
+                adpo.save()
+                return redirect('/dashboard')
+        else:
+            return HttpResponse("Only admins Action")       
+    else:
+        return redirect('/')
+def addParticipant(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            if request.method == 'POST':
+                form = ParticipantForm(request.POST, request.FILES)
+                if form.is_valid():
+                    form.save()
+                return redirect('/voting/')
+        else:
+            return HttpResponse("Only admins Action")       
+    else:
+        return redirect('/')
+    
 def logout_session(request):
     logout(request)
     return redirect('/')

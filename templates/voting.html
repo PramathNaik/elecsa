@@ -110,12 +110,31 @@
                     <h6 class="text-center mb-0">{{ item.name }}</h6>
                     <span class="text-xs">{{ item.details }}</span>
                     <hr class="horizontal dark my-3">
+                    {% if not request.user.is_superuser %}
                     <a href="{% url 'vote' post.id item.id %}"class="btn bg-gradient-dark mb-0">Vote</a>
+                    {% else %}
+                    <a href="{% url 'removeparticipant' post.id item.id %}"class="btn bg-gradient-dark mb-0">Remove Participant</a>
+                    {% endif %}
                   </div>
                 </div>
             </div>
             {% endfor %}
- 
+            {% if request.user.is_superuser %}
+            <div class="col-sm-3 pt-3">
+              <div class="card">
+                <div class="card-header mx-4 p-3 text-center">
+                </div>
+                <div class="card-body pt-0 p-3 text-center">
+                  <form action="{% url 'addparticipant' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                  <hr class="horizontal dark my-3">
+                  <button type="submit" class="btn bg-gradient-dark mb-0">Add Participant</button>
+                </form>
+                </div>
+              </div>
+          </div>
+            {% endif %}
               
                 
             </div>
